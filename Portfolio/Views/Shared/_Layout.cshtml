@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Portfolio</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="~/lib/datatablesjs/datatables.min.css" rel="stylesheet" />
+    <link href="~/lib/fontawesome/all.min.css" rel="stylesheet" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/Portfolio.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <div id="sidebar">
+        <ul class="nav flex-column px-3">
+            <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+            <li class="nav-item"><a href="/About" class="nav-link">About</a></li>
+            <li class="nav-item"><a href="/Contact" class="nav-link">Contact</a></li>
+        </ul>
+    </div>
+
+    <div id="overlay" onclick="toggleSidebar()"></div>
+
+    <div id="main-content" class="p-4">
+        <button class="btn btn-dark mb-3" onclick="toggleSidebar()">☰</button>
+        <main role="main" class="container">
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+   @*  <script src="~/lib/chartjs/chart.umd.min.js"></script>
+    <script src="~/lib/chartjs/chart.umd.js"></script>
+    <script src="~/lib/chartjs/chart.js"></script> *@
+    <script src="~/lib/datatablesjs/datatables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatablesjs/datatables.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
