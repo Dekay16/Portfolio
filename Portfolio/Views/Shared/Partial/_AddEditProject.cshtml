@@ -2,10 +2,35 @@
 @model ProjectsViewModel
 
 <div class="container">
-    <div class="row">
-        <div class="col">
-            <input asp-for="ID" class="form-control" />
-            <span asp-validation-for="ID" class="text-danger"></span>
+    <form id="addEditProject" asp-controller="Home" method="post">
+        <div class="modal-header">
+            <h5>@((Model.ID.HasValue ? "Edit" : "Add") + " Project")</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-    </div>
+        <div class="modal-body">
+            <div class="row mb-3">
+                @if (Model.ID.HasValue)
+                {
+                    <div class="col">
+                        <input asp-for="ID" class="form-control" />
+                        <span asp-validation-for="ID" class="text-danger"></span>
+                    </div>
+                }
+                <div class="col-2">
+                    <label class="form-label">Title: </label>
+                </div>
+                <div class="col-2">
+                    <input asp-for="Title" class="form-control" value="@Model.Title" />
+                    <span class="text-danger" asp-validation-for="Title"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondy" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>

@@ -34,10 +34,19 @@ namespace Portfolio.Controllers
             return View(vm);
         }
 
-        public IActionResult AddEditProject()
+        public IActionResult AddEditProject(int? id)
         {
             var vm = new ProjectsViewModel();
-            return PartialView("/Partial/_AddEditProject", vm);
+            if(id.HasValue)
+            {
+                vm = _manager.GetProjectById(id.Value);
+            }
+            else
+            {
+                vm = new ProjectsViewModel();
+            }
+
+            return PartialView("Partial/_AddEditProject", vm);
         }
 
         public IActionResult Privacy()

@@ -66,7 +66,7 @@ namespace Portfolio.Business.Managers
             {
                 var project = new PortfolioProject();
 
-                project.ID = vm.ID;
+                project.ID = vm.ID.Value;
                 project.Title = vm.Title;
                 project.Description = vm.Description;
                 project.Technologies = vm.Technologies;
@@ -88,7 +88,7 @@ namespace Portfolio.Business.Managers
             {
                 var project = _context.Projects.Find(vm.ID);
 
-                project.ID = vm.ID;
+                project.ID = vm.ID.Value;
                 project.Title = vm.Title;
                 project.Description = vm.Description;
                 project.Technologies = vm.Technologies;
