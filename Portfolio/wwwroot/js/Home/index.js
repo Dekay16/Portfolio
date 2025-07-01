@@ -1,33 +1,31 @@
-﻿$(document).ready(function () {
-    $('.open-modal').click(function () {
-        const id = $(this).data('id');
-        const url = id ? `/Home/AddEditProject?id=${id}` : `/Home/AddEditProject`;
+﻿function openAddEditModal(id) {
+    $.get('/Home/AddEditProject', { id: id }, function (data) {
+        $('#addEditModalBody').html(data);
+        $('#addEditProjectModal').modal('show');
+        $.validator.unobtrusive.parse('#addeditprojectform');
+    });
+}
 
-        $.get(url, function (html) {
-            $('#projectContent').html(html);
-            const modal = new bootstrap.Modal(document.getElementById('addEditProjectModal'));
-            modal.show();
+$(document).on('submit', '#addeditprojectform', function (e) {
+    // For adding or editing
+    e.preventDefault();
 
-            // For adding or editing
-
-            //$('#itemForm').on('submit', function (e) {
-            //    e.preventDefault();
-
-            //    $.ajax({
-            //        type: 'POST',
-            //        url: '/Items/SaveItem',
-            //        data: $(this).serialize(),
-            //        success: function (res) {
-            //            if (res.success) {
-            //                modal.hide();
-            //                location.reload(); // or refresh list
-            //            }
-            //        },
-            //        error: function (xhr) {
-            //            alert("Error: " + xhr.responseText);
-            //        }
-            //    });
-            //});
-        });
+    $.ajax({
+        type: 'POST',
+        url: '/Home/AddEditProject',
+        data: $(this).serialize(),
+        success: function (res) {
+            if (res.success) {
+                $('#addEditProjectModal').modal('hide');
+                location.reload(); // or refresh list
+            }
+            else {
+                $('#addEditModalBody').html(res);
+                $.validator.unobtrusive.parse('#addeditprojectform');
+            }
+        },
+        error: function (xhr) {
+            alert("Error: " + xhr.responseText);
+        }
     });
 });

@@ -21,23 +21,14 @@ namespace Portfolio.Controllers
         {
             var vm = _manager.GetAllProjects();
 
-            //var test = new ProjectsViewModel
-            //{
-            //    Title = "Test Title",
-            //    Description = "Test Desc",
-            //    Technologies = "Test Tech",
-            //    GitHubLink = "google.com",
-            //    Extra = "Test Extra"
-            //};
-            //_manager.AddProject(test);
-
             return View(vm);
         }
 
+        [HttpGet]
         public IActionResult AddEditProject(int? id)
         {
             var vm = new ProjectsViewModel();
-            if(id.HasValue)
+            if(id.HasValue && id != 0)
             {
                 vm = _manager.GetProjectById(id.Value);
             }
@@ -49,10 +40,37 @@ namespace Portfolio.Controllers
             return PartialView("Partial/_AddEditProject", vm);
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddEditProject(ProjectsViewModel vm)
         {
-            return View();
+            if(!ModelState.IsValid)
+            {
+                return PartialView("Partial/_AddEditProject", vm);
+            }
+
+            if(vm.ID == 0 || vm.ID == null)
+            {
+                var model = new ProjectsViewModel
+                {
+                    Title = vm.Title,
+                    Description = vm.Description,
+                    Technologies = vm.Technologies,
+                    GitHubLink = vm.GitHubLink,
+                    Extra = vm.Extra
+                };
+
+                _manager.AddProject(model);
+
+            }
+            else
+            {
+                _manager.EditProject(vm);
+            }
+
+            return Json(new { success = true });
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

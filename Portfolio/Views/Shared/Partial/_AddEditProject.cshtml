@@ -2,33 +2,59 @@
 @model ProjectsViewModel
 
 <div class="container">
-    <form id="addEditProject" asp-controller="Home" method="post">
-        <div class="modal-header">
-            <h5>@((Model.ID.HasValue ? "Edit" : "Add") + " Project")</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-            <div class="row mb-3">
-                @if (Model.ID.HasValue)
-                {
-                    <div class="col">
-                        <input asp-for="ID" class="form-control" />
-                        <span asp-validation-for="ID" class="text-danger"></span>
-                    </div>
-                }
-                <div class="col-2">
-                    <label class="form-label">Title: </label>
+    <form id="addeditprojectform" asp-controller="Home" asp-action="AddEditProject" method="post">
+        @Html.AntiForgeryToken()
+        <div class="row mb-3">
+            @if (Model.ID.HasValue)
+            {
+                <div class="col">
+                    <input asp-for="ID" class="form-control" />
+                    <span asp-validation-for="ID" class="text-danger"></span>
                 </div>
-                <div class="col-2">
+            }
+            <div class="row m-2">
+                <div class="col-3">
+                    <label class="col-form-label">Title: </label>
+                </div>
+                <div class="col-6">
                     <input asp-for="Title" class="form-control" value="@Model.Title" />
                     <span class="text-danger" asp-validation-for="Title"></span>
                 </div>
-
-                <div class="row">
-                    <div class="col">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <button type="button" class="btn btn-secondy" data-bs-dismiss="modal">Close</button>
-                    </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-3">
+                    <label class="col-form-label">Description: </label>
+                </div>
+                <div class="col-6">
+                    <input asp-for="Description" class="form-control" value="@Model.Description" />
+                    <span class="text-danger" asp-validation-for="Description"></span>
+                </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-3">
+                    <label class="col-form-label">Technologies: </label>
+                </div>
+                <div class="col-6">
+                    <input asp-for="Technologies" class="form-control" value="@Model.Technologies" />
+                    <span class="text-danger" asp-validation-for="Technologies"></span>
+                </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-3">
+                    <label class="col-form-label">Extras: </label>
+                </div>
+                <div class="col-6">
+                    <input asp-for="Extra" class="form-control" value="@Model.Extra" />
+                    <span class="text-danger" asp-validation-for="Extra"></span>
+                </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-3">
+                    <label class="col-form-label">GitHub Link: </label>
+                </div>
+                <div class="col-6">
+                    <input asp-for="GitHubLink" class="form-control" value="@Model.GitHubLink" />
+                    <span class="text-danger" asp-validation-for="GitHubLink"></span>
                 </div>
             </div>
         </div>
