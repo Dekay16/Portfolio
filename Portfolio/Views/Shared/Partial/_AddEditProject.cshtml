@@ -2,16 +2,13 @@
 @model ProjectsViewModel
 
 <div class="container">
-    <form id="addeditprojectform" asp-controller="Home" asp-action="AddEditProject" method="post">
+    <form id="addeditprojectform" asp-controller="Home" asp-action="AddEditProject" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <div class="row mb-3">
-            @if (Model.ID.HasValue)
-            {
-                <div class="col">
-                    <input asp-for="ID" class="form-control" />
-                    <span asp-validation-for="ID" class="text-danger"></span>
-                </div>
-            }
+            <div class="col">
+                <input asp-for="ID" class="form-control" hidden />
+                <span asp-validation-for="ID" class="text-danger"></span>
+            </div>
             <div class="row m-2">
                 <div class="col-3">
                     <label class="col-form-label">Title: </label>
@@ -57,6 +54,15 @@
                     <span class="text-danger" asp-validation-for="GitHubLink"></span>
                 </div>
             </div>
+@*             <div class="row m-2">
+                <div class="col-3">
+                    <label class="col-form-label">Image: </label>
+                </div>
+                <div class="col-6">
+                    <input type="file" asp-for="ImageFile" class="form-control" value="@Model.FilePath" />
+                    <span class="text-danger" asp-validation-for="ImageFile"></span>
+                </div>
+            </div> *@
         </div>
     </form>
 </div>

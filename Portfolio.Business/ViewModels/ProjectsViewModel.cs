@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -20,5 +21,8 @@ namespace Portfolio.Business.ViewModels
         [Url]
         public string? GitHubLink { get; set; }
         public string? Extra { get; set; }
+
+        public IFormFile ImageFile { get; set; }
+        public string? FilePath { get; set; }
     }
 }

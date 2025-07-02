@@ -8,15 +8,14 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link href="~/lib/datatablesjs/datatables.min.css" rel="stylesheet" />
-    <link href="~/lib/fontawesome/all.min.css" rel="stylesheet" asp-append-version="true"/>
     <link rel="stylesheet" href="~/Portfolio.styles.css" asp-append-version="true" />
 </head>
 <body>
     <div id="sidebar">
         <ul class="nav flex-column px-3">
-            <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
-            <li class="nav-item"><a href="/About" class="nav-link">About</a></li>
-            <li class="nav-item"><a href="/Contact" class="nav-link">Contact</a></li>
+            <li class="nav-item"><a asp-action="Index" asp-controller="Home" class="nav-link">Home</a></li>
+            <li class="nav-item"><a asp-action="Index" asp-controller="Admin" class="nav-link">Admin</a></li>
+            <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link">Contact/Resume</a></li>
         </ul>
     </div>
 
@@ -33,6 +32,7 @@
    @*  <script src="~/lib/chartjs/chart.umd.min.js"></script>
     <script src="~/lib/chartjs/chart.umd.js"></script>
     <script src="~/lib/chartjs/chart.js"></script> *@
+    <script src="https://kit.fontawesome.com/63c47b8b1f.js" crossorigin="anonymous"></script>
     <script src="~/lib/datatablesjs/datatables.min.js" asp-append-version="true"></script>
     <script src="~/lib/datatablesjs/datatables.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

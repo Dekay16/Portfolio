@@ -49,24 +49,48 @@ namespace Portfolio.Controllers
                 return PartialView("Partial/_AddEditProject", vm);
             }
 
-            if(vm.ID == 0 || vm.ID == null)
-            {
-                var model = new ProjectsViewModel
+            //if (vm.ImageFile != null && vm.ImageFile.Length > 0)
+            //{
+            //    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+
+            //    // Ensure the folder exists
+            //    if (!Directory.Exists(uploadsFolder))
+            //    {
+            //        Directory.CreateDirectory(uploadsFolder);
+            //    }
+
+            //    // Generate unique file name if needed to avoid conflicts
+            //    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(vm.ImageFile.FileName);
+            //    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            //    // Save the file to wwwroot/images
+            //    using (var fileStream = new FileStream(filePath, FileMode.Create))
+            //    {
+            //        vm.ImageFile.CopyTo(fileStream);
+            //    }
+
+
+
+                if (vm.ID == 0 || vm.ID == null)
                 {
-                    Title = vm.Title,
-                    Description = vm.Description,
-                    Technologies = vm.Technologies,
-                    GitHubLink = vm.GitHubLink,
-                    Extra = vm.Extra
-                };
+                    var model = new ProjectsViewModel
+                    {
+                        Title = vm.Title,
+                        Description = vm.Description,
+                        Technologies = vm.Technologies,
+                        GitHubLink = vm.GitHubLink,
+                        Extra = vm.Extra,
+                        //FilePath = $"/images/{uniqueFileName}"
+                    };
 
-                _manager.AddProject(model);
+                    _manager.AddProject(model);
 
-            }
-            else
-            {
-                _manager.EditProject(vm);
-            }
+                }
+                else
+                {
+                    _manager.EditProject(vm);
+                }
+            //}
 
             return Json(new { success = true });
         }
