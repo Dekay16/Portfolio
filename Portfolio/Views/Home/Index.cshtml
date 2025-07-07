@@ -29,6 +29,7 @@
                             @* <img src="@Model[j].FilePath" class="card-img-top" alt="Project card image"> *@
                             <div class="card-body">
                                 <h5 class="card-title d-inline-flex">@Model[j].Title</h5>
+                                <a onclick="deleteProject(@Model[j].ID)" class="float-end d-inline-flex ms-3"><i class="fa-solid fa-trash"></i></a>
                                 <a onclick="openAddEditModal(@Model[j].ID)" class="float-end d-inline-flex"><i class="fa-solid fa-pen-to-square"></i></a>
                                 <p class="card-text">@Model[j].Description</p> <br />
                                 <p class="text-secondary-emphasis">Technologies: @Model[j].Technologies</p>

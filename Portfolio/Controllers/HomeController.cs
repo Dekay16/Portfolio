@@ -95,8 +95,30 @@ namespace Portfolio.Controllers
             return Json(new { success = true });
         }
 
+        [HttpGet]
+        public IActionResult DeleteProject(int id)
+        {
+            bool success;
+            try
+            {
+                if (id != null)
+                {
+                    _manager.DeleteProject(id);
+                    return Json(new { success = true });
+                }
+                else
+                {
+                    return Json(new { success = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false });
+            }
+            
+        }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
