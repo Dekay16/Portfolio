@@ -4,6 +4,9 @@ using Portfolio.Business.Interfaces;
 using Portfolio.Business.Managers;
 using Portfolio.Context.Interfaces;
 using Portfolio.Data;
+using Portfolio.Middleware;
+using Portfolio.SeedData;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
 builder.Services.AddScoped<IProjectsManager, ProjectsManager>();
+builder.Services.AddScoped<AdminManager>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -37,11 +41,13 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseMiddleware<TrafficLoggingMiddleware>();
 
 app.UseAuthorization();
 
 app.MapStaticAssets();
 app.UseStaticFiles();
+
 
 app.MapControllerRoute(
     name: "default",
@@ -50,5 +56,12 @@ app.MapControllerRoute(
 
 app.MapRazorPages()
    .WithStaticAssets();
+
+//using (var scope = app.Services.CreateScope())
+//{
+//    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//    db.Database.Migrate(); // ensures SQLite tables exist
+//    TrafficSeeder.SeedTestData(db);
+//}
 
 app.Run();

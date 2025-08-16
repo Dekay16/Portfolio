@@ -1,0 +1,76 @@
+﻿@{
+    var range = ViewBag.Range as string;
+    var dataJson = ViewBag.Data;
+    var selectedDay = ViewBag.SelectedDay;
+}
+
+<h2>Traffic - @range.ToUpper()</h2>
+
+<form method="get" action="/Admin/VisitsPerDay">
+    <input type="hidden" name="range" value="day" />
+    <label>Select day:</label>
+    <input type="date" name="date" value="@selectedDay" />
+    <button type="submit">View</button>
+</form>
+
+<div class="btn-group mt-2 mb-2">
+    <a asp-controller="Admin" asp-action="VisitsPerDay" asp-route-range="day" class="btn btn-primary">Day</a>
+    <a asp-controller="Admin" asp-action="VisitsPerDay" asp-route-range="week" class="btn btn-primary">Week</a>
+    <a asp-controller="Admin" asp-action="VisitsPerDay" asp-route-range="month" class="btn btn-primary">Month</a>
+</div>
+
+<div class="chart-container" style="position: relative; height:700px; width:100%;">
+    <canvas id="trafficChart"></canvas>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('trafficChart').getContext('2d');
+    const chartData = @Html.Raw(dataJson);
+
+    // Create a gradient fill for the line based on Y value
+    function getGradient(ctx, chartArea, maxValue) {
+        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+        gradient.addColorStop(0, 'green'); // low
+        gradient.addColorStop(0.5, 'yellow'); // medium
+        gradient.addColorStop(1, 'red'); // high
+        return gradient;
+    }
+
+    const labels = chartData.map(d => d.Label);
+    const dataValues = chartData.map(d => d.Count);
+
+    const trafficChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Visits',
+                data: dataValues,
+                fill: true,
+                borderColor: 'black',
+                borderWidth: 2,
+                pointRadius: 5,
+                pointBackgroundColor: dataValues.map(v => {
+                    if (v > 80) return 'red';
+                    if (v > 50) return 'orange';
+                    if (v > 20) return 'yellow';
+                    return 'green';
+                }),
+                tension: 0.3,
+                backgroundColor: function(context) {
+                    const chart = context.chart;
+                    const {ctx, chartArea} = chart;
+                    if (!chartArea) return null;
+                    return getGradient(ctx, chartArea, Math.max(...dataValues));
+                }
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+</script>
