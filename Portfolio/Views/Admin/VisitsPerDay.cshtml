@@ -4,24 +4,34 @@
     var selectedDay = ViewBag.SelectedDay;
 }
 
-<h2>Traffic - @range.ToUpper()</h2>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Traffic - @range.ToUpper()</h2>
+        </div>
+        <div class="card-body">
+            <form method="get" action="/Admin/VisitsPerDay">
+                <input type="hidden" name="range" value="day" />
+                <label>Select day:</label>
+                <div class="btn-group">
+                    <input class="form-control" type="date" name="date" value="@selectedDay" />
+                    <button class="btn btn-outline-dark btn-group" type="submit">View</button>
+                </div>
+            </form>
 
-<form method="get" action="/Admin/VisitsPerDay">
-    <input type="hidden" name="range" value="day" />
-    <label>Select day:</label>
-    <input type="date" name="date" value="@selectedDay" />
-    <button type="submit">View</button>
-</form>
+            <div class="btn-group mt-2 mb-2">
+                <a asp-controller="Admin" asp-action="VisitsPerDay" asp-route-range="day" class="btn btn-primary">Day</a>
+                <a asp-controller="Admin" asp-action="VisitsPerDay" asp-route-range="week" class="btn btn-primary">Week</a>
+                <a asp-controller="Admin" asp-action="VisitsPerDay" asp-route-range="month" class="btn btn-primary">Month</a>
+            </div>
 
-<div class="btn-group mt-2 mb-2">
-    <a asp-controller="Admin" asp-action="VisitsPerDay" asp-route-range="day" class="btn btn-primary">Day</a>
-    <a asp-controller="Admin" asp-action="VisitsPerDay" asp-route-range="week" class="btn btn-primary">Week</a>
-    <a asp-controller="Admin" asp-action="VisitsPerDay" asp-route-range="month" class="btn btn-primary">Month</a>
+            <div class="chart-container" style="position: relative; height:700px; width:100%;">
+                <canvas id="trafficChart"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="chart-container" style="position: relative; height:700px; width:100%;">
-    <canvas id="trafficChart"></canvas>
-</div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
