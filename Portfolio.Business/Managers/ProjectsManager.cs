@@ -8,9 +8,11 @@ namespace Portfolio.Business.Managers
     public class ProjectsManager : IProjectsManager
     {
         private readonly ApplicationDbContext _context;
-        public ProjectsManager(ApplicationDbContext context)
+        private readonly IErrorLogger _logger;
+        public ProjectsManager(ApplicationDbContext context, IErrorLogger logger)
         {
             _context = context;
+            _logger = logger;
         }
         public List<ProjectsViewModel> GetAllProjects()
         {
@@ -31,7 +33,7 @@ namespace Portfolio.Business.Managers
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, "Error in ProjectManager.GetAllProjects");
                 throw;
             }
         }
@@ -56,6 +58,7 @@ namespace Portfolio.Business.Managers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in ProjectManager.GetProjectById");
                 throw;
             }
         }
@@ -77,6 +80,7 @@ namespace Portfolio.Business.Managers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in ProjectManager.AddProject");
                 throw;
             }
         }
@@ -99,6 +103,7 @@ namespace Portfolio.Business.Managers
             }
             catch (Exception ex) 
             {
+                _logger.LogError(ex, "Error in ProjectManager.EditProject");
                 throw;
             }
         }
@@ -117,6 +122,7 @@ namespace Portfolio.Business.Managers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in ProjectManager.DeleteProject");
                 throw;
             }
         }

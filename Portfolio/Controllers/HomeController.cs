@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Portfolio.Business;
 using Portfolio.Business.Interfaces;
 using Portfolio.Business.ViewModels;
 using Portfolio.Models;
@@ -8,10 +9,10 @@ namespace Portfolio.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IErrorLogger _logger;
         private readonly IProjectsManager _manager;
 
-        public HomeController(ILogger<HomeController> logger, IProjectsManager manager)
+        public HomeController(IErrorLogger logger, IProjectsManager manager)
         {
             _logger = logger;
             _manager = manager;
@@ -19,9 +20,16 @@ namespace Portfolio.Controllers
 
         public IActionResult Index()
         {
-            var vm = _manager.GetAllProjects();
-
-            return View(vm);
+            try
+            {
+                var vm = _manager.GetAllProjects();
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in HomeController.Index");
+                return StatusCode(500, "An error occurred");
+            }
         }
 
         [HttpGet]
@@ -113,6 +121,7 @@ namespace Portfolio.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error in HomeController.DeleteProject");
                 return Json(new { success = false });
             }
             

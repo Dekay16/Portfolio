@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Portfolio;
+using Portfolio.Business;
 using Portfolio.Business.Interfaces;
 using Portfolio.Business.Managers;
 using Portfolio.Context.Interfaces;
@@ -15,6 +17,8 @@ builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
 builder.Services.AddScoped<IProjectsManager, ProjectsManager>();
 builder.Services.AddScoped<AdminManager>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IErrorLogger, DBErrorLogger>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -41,7 +45,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
-app.UseMiddleware<TrafficLoggingMiddleware>();
+// Can be named like this because of the extenstion method in Middleware class.
+app.UseTrafficLogging();
 
 app.UseAuthorization();
 

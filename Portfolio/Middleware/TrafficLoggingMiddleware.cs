@@ -9,11 +9,9 @@ using System.Threading.Tasks;
 
 namespace Portfolio.Middleware
 {
-    // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     public class TrafficLoggingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly TimeSpan ThrottleTime = TimeSpan.FromHours(1);
 
         public TrafficLoggingMiddleware(RequestDelegate next)
         {
@@ -32,6 +30,9 @@ namespace Portfolio.Middleware
         }
     }
 
+    /// <summary>
+    /// Allows for some cleaner code in Program.cs file. Can call this directly instead of app.UseMiddleware<>();
+    /// </summary>
     public static class TrafficMiddlewareExtensions
     {
         public static IApplicationBuilder UseTrafficLogging(this IApplicationBuilder builder)

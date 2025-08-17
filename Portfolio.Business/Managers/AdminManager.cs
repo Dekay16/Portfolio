@@ -34,7 +34,8 @@ namespace Portfolio.Business.Managers
                 {
                     IpAddress = ip,
                     PathAccessed = path,
-                    TimeStamp = DateTime.Now
+                    TimeStamp = DateTime.Now,
+                    UserId = "Dekan"
                 };
                 _db.TrafficLog.Add(log);
                 await _db.SaveChangesAsync();
@@ -43,7 +44,7 @@ namespace Portfolio.Business.Managers
 
         public List<TrafficSummaryViewModel> GetTraffic(string range, DateTime? selectedDay = null)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
             IQueryable<TrafficLog> query = _db.TrafficLog;
 
             if (range == "day")

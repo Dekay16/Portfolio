@@ -14,7 +14,17 @@
     <div id="sidebar">
         <ul class="nav flex-column px-3">
             <li class="nav-item"><a asp-action="Index" asp-controller="Home" class="nav-link">Home</a></li>
-            <li class="nav-item"><a asp-action="VisitsPerDay" asp-controller="Admin" class="nav-link">Admin</a></li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Admin
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="VisitsPerDay">Traffic Log</a></li>
+                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Error">Error Log</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                </ul>
+            </li>
             <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link">Contact/Resume</a></li>
         </ul>
     </div>
@@ -29,10 +39,7 @@
     </div>
     <script src="~/lib/jquery/dist/jquery-3.7.1.min.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-   @*  <script src="~/lib/chartjs/chart.umd.min.js"></script>
-    <script src="~/lib/chartjs/chart.umd.js"></script>
-    <script src="~/lib/chartjs/chart.js"></script> *@
-    <script src="https://kit.fontawesome.com/63c47b8b1f.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/63c47b8b1f.js" crossorigin="anonymous" asp-append-version="true"></script>
     <script src="~/lib/datatablesjs/datatables.min.js" asp-append-version="true"></script>
     <script src="~/lib/datatablesjs/datatables.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
