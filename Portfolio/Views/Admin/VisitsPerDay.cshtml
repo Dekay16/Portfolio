@@ -30,57 +30,35 @@
             </div>
         </div>
     </div>
+    <div class="card mt-3">
+        <div class="card-header">
+            <h2>Traffic Logs</h2>
+        </div>
+        <div class="card-body">
+            <table id="trafficTable" class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>IP Address</th>
+                        <th>User</th>
+                        <th>Path</th>
+                        <th>Time Stamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctx = document.getElementById('trafficChart').getContext('2d');
-    const chartData = @Html.Raw(dataJson);
-
-    // Create a gradient fill for the line based on Y value
-    function getGradient(ctx, chartArea, maxValue) {
-        const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-        gradient.addColorStop(0, 'green'); // low
-        gradient.addColorStop(0.5, 'yellow'); // medium
-        gradient.addColorStop(1, 'red'); // high
-        return gradient;
-    }
-
-    const labels = chartData.map(d => d.Label);
-    const dataValues = chartData.map(d => d.Count);
-
-    const trafficChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Visits',
-                data: dataValues,
-                fill: true,
-                borderColor: 'black',
-                borderWidth: 2,
-                pointRadius: 5,
-                pointBackgroundColor: dataValues.map(v => {
-                    if (v > 80) return 'red';
-                    if (v > 50) return 'orange';
-                    if (v > 20) return 'yellow';
-                    return 'green';
-                }),
-                tension: 0.3,
-                backgroundColor: function(context) {
-                    const chart = context.chart;
-                    const {ctx, chartArea} = chart;
-                    if (!chartArea) return null;
-                    return getGradient(ctx, chartArea, Math.max(...dataValues));
-                }
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true } }
-        }
-    });
-</script>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        window.chartData = @Html.Raw(dataJson);
+    </script>
+    <script src="~/js/admin/visits.js" asp-append-version="true"></script>
+}

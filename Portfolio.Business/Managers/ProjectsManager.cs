@@ -114,7 +114,7 @@ namespace Portfolio.Business.Managers
             {
                 var project = _context.Projects.Find(id);
 
-                if (project.ID != null)
+                if (project.ID != 0 && project != null)
                 {
                     _context.Remove(project);
                     _context.SaveChanges();

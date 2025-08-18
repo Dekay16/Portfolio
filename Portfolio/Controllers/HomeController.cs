@@ -35,47 +35,57 @@ namespace Portfolio.Controllers
         [HttpGet]
         public IActionResult AddEditProject(int? id)
         {
-            var vm = new ProjectsViewModel();
-            if(id.HasValue && id != 0)
+            try
             {
-                vm = _manager.GetProjectById(id.Value);
-            }
-            else
-            {
-                vm = new ProjectsViewModel();
-            }
+                var vm = new ProjectsViewModel();
+                if (id.HasValue && id != 0)
+                {
+                    vm = _manager.GetProjectById(id.Value);
+                }
+                else
+                {
+                    vm = new ProjectsViewModel();
+                }
 
-            return PartialView("Partial/_AddEditProject", vm);
+                return PartialView("Partial/_AddEditProject", vm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro in HomeController.AddEditProject - GET");
+                throw;
+            }
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddEditProject(ProjectsViewModel vm)
         {
-            if(!ModelState.IsValid)
+            try
             {
-                return PartialView("Partial/_AddEditProject", vm);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return PartialView("Partial/_AddEditProject", vm);
+                }
 
-            //if (vm.ImageFile != null && vm.ImageFile.Length > 0)
-            //{
-            //    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+                //if (vm.ImageFile != null && vm.ImageFile.Length > 0)
+                //{
+                //    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
 
-            //    // Ensure the folder exists
-            //    if (!Directory.Exists(uploadsFolder))
-            //    {
-            //        Directory.CreateDirectory(uploadsFolder);
-            //    }
+                //    // Ensure the folder exists
+                //    if (!Directory.Exists(uploadsFolder))
+                //    {
+                //        Directory.CreateDirectory(uploadsFolder);
+                //    }
 
-            //    // Generate unique file name if needed to avoid conflicts
-            //    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(vm.ImageFile.FileName);
-            //    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                //    // Generate unique file name if needed to avoid conflicts
+                //    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(vm.ImageFile.FileName);
+                //    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
-            //    // Save the file to wwwroot/images
-            //    using (var fileStream = new FileStream(filePath, FileMode.Create))
-            //    {
-            //        vm.ImageFile.CopyTo(fileStream);
-            //    }
+                //    // Save the file to wwwroot/images
+                //    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                //    {
+                //        vm.ImageFile.CopyTo(fileStream);
+                //    }
 
 
 
@@ -98,9 +108,15 @@ namespace Portfolio.Controllers
                 {
                     _manager.EditProject(vm);
                 }
-            //}
+                //}
 
-            return Json(new { success = true });
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro in HomeController.AddEditProject - POST");
+                throw;
+            }
         }
 
         [HttpGet]
