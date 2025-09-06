@@ -106,7 +106,7 @@ namespace Portfolio.Business.Managers
         {
             try
             {
-                return _db.TrafficLog.OrderBy(x => x.ID).ToList();
+                return _db.TrafficLog.OrderBy(x => x.TimeStamp).ToList();
             }
             catch (Exception ex)
             {

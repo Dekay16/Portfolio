@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Caching.Memory;
 using NuGet.Protocol.Core.Types;
 using Portfolio.Business.Managers;
 using Portfolio.Context.Models;
@@ -13,31 +14,73 @@ namespace Portfolio.Middleware
     public class TrafficLoggingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IMemoryCache _cache;
 
-        public TrafficLoggingMiddleware(RequestDelegate next)
+        public TrafficLoggingMiddleware(RequestDelegate next, IMemoryCache cache)
         {
             _next = next;
+            _cache = cache;
         }
 
         public async Task InvokeAsync(HttpContext context, ApplicationDbContext db)
         {
             var path = context.Request.Path.Value;
-
-            if (!IsStaticFile(path))
+            if (IsStaticFile(path))
             {
-                var log = new TrafficLog
-                {
-                    PathAccessed = path,
-                    UserId = context.User.Identity?.Name ?? "Anonymous",
-                    TimeStamp = DateTime.Now,
-                    IpAddress = GetIpAddress(context),
-                };
+                await _next(context);
+                return;
+            }
 
-                db.TrafficLog.Add(log);
-                await db.SaveChangesAsync();
+            var userId = context.User.Identity?.Name ?? "Anonymous";
+            var ip = GetIpAddress(context);
+            var key = $"{userId}_{ip}";
+
+            var now = DateTime.Now;
+
+            if (_cache.TryGetValue<(string Path, DateTime TimeStamp)>(key, out var lastVisit))
+            {
+                bool pageChanged = lastVisit.Path != path;
+                bool overHour = (now - lastVisit.TimeStamp) > TimeSpan.FromHours(1);
+
+                if (pageChanged || overHour)
+                {
+                    await SaveLogAsync(db, path, userId, ip);
+
+                    // update cache with sliding + absolute expiration
+                    _cache.Set(key, (path, now), new MemoryCacheEntryOptions
+                    {
+                        SlidingExpiration = TimeSpan.FromHours(1),   // if not used for 1h, remove
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24) // hard cap
+                    });
+                }
+            }
+            else
+            {
+                // first visit for this user/IP
+                await SaveLogAsync(db, path, userId, ip);
+
+                _cache.Set(key, (path, now), new MemoryCacheEntryOptions
+                {
+                    SlidingExpiration = TimeSpan.FromHours(1),
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(24)
+                });
             }
 
             await _next(context);
+        }
+
+        private async Task SaveLogAsync(ApplicationDbContext db, string path, string userId, string ip)
+        {
+            var log = new TrafficLog
+            {
+                PathAccessed = path,
+                UserId = userId,
+                TimeStamp = DateTime.Now,
+                IpAddress = ip,
+            };
+
+            db.TrafficLog.Add(log);
+            await db.SaveChangesAsync();
         }
 
         private bool IsStaticFile(string path)
@@ -45,18 +88,18 @@ namespace Portfolio.Middleware
             if (string.IsNullOrEmpty(path))
                 return true;
 
-            // Exclude files with common extensions
             string[] staticFileExtensions = new[]
             {
-            ".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".svg",
-            ".woff", ".woff2", ".ttf", ".map"
-        };
+                ".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".svg",
+                ".woff", ".woff2", ".ttf", ".map"
+            };
 
-            return staticFileExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
+            return staticFileExtensions.Any(ext =>
+                path.EndsWith(ext, StringComparison.OrdinalIgnoreCase));
         }
+
         private string GetIpAddress(HttpContext context)
         {
-            // If you're behind a proxy/load balancer, look at X-Forwarded-For first
             var ip = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
 
             if (string.IsNullOrEmpty(ip))
@@ -68,10 +111,6 @@ namespace Portfolio.Middleware
         }
     }
 
-
-    /// <summary>
-    /// Allows for some cleaner code in Program.cs file. Can call this directly instead of app.UseMiddleware<>();
-    /// </summary>
     public static class TrafficMiddlewareExtensions
     {
         public static IApplicationBuilder UseTrafficLogging(this IApplicationBuilder builder)

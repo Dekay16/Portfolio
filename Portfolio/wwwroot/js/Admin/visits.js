@@ -55,7 +55,18 @@
             { data: 'ipAddress' },
             { data: 'userId' },
             { data: 'pathAccessed' },
-            { data: 'timeStamp' }
-        ]
+            {
+                data: 'timeStamp',
+                render: function (data, type, row) {
+                    if (type === 'display' || type === 'filter') {
+                        // Convert to local string for display
+                        return new Date(data).toLocaleString();
+                    }
+                    // For ordering, keep raw data
+                    return data;
+                }
+            }
+        ],
+        order: [[3, 'desc']]
     });
 });
