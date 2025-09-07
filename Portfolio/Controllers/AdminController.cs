@@ -9,67 +9,42 @@ namespace Portfolio.Controllers
     [Route("admin")]
     public class AdminController : Controller
     {
-        private readonly AdminManager _manager;
+        private readonly AdminManager _adminManager;
         private readonly IErrorLogger _logger;
 
         public AdminController(AdminManager manager, IErrorLogger logger)
         {
-            _manager = manager;
+            _adminManager = manager;
             _logger = logger;
         }
-
-        /// <summary>
-        /// Used to populate the chart
-        /// </summary>
-        /// <param name="range"></param>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        [HttpGet("VisitsPerDay")]
-        public IActionResult VisitsPerDay(string range = "day", string date = null)
+        [HttpGet("Traffic")]
+        public IActionResult Traffic()
         {
-            DateTime? selectedDay = null;
-            try
-            {
-                if (DateTime.TryParse(date, out var parsedDate))
-                    selectedDay = parsedDate;
-
-                var data = _manager.GetTraffic(range, selectedDay)
-                    .Select(x => new { Label = x.Date.ToString(range == "day" ? "HH:mm" : "MM-dd"), Count = x.Count })
-                    .ToList();
-
-                ViewBag.Range = range;
-                ViewBag.SelectedDay = selectedDay?.ToString("yyyy-MM-dd") ?? DateTime.UtcNow.ToString("yyyy-MM-dd");
-                ViewBag.Data = System.Text.Json.JsonSerializer.Serialize(data);
-
-                return View();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in AdminController.VisitsPerDay");
-                throw;
-            }
+            return View();
         }
 
-        /// <summary>
-        /// Used to populate the table with json
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("GetTrafficTable")]
-        public IActionResult GetTrafficTable()
+        [HttpGet("Traffic/Summary")]
+        public IActionResult GetTrafficSummary(string range, DateTime? startDate, DateTime? endDate)
         {
-            try
-            {
-                List<TrafficLog> data = new List<TrafficLog>();
+            var summary = _adminManager.GetTrafficSummary(range, startDate, endDate);
+            return Json(summary.Select(s => new { label = s.Date.ToString("g"), count = s.Count }));
+        }
 
-                data = _manager.GetTrafficTable();
+        [HttpGet("Traffic/Logs")]
+        public IActionResult GetTrafficLogs(DateTime? startDate, DateTime? endDate)
+        {
+            var logs = _adminManager.GetTrafficLogs(startDate, endDate);
 
-                return Json(new { data });
-            }
-            catch (Exception ex)
+            var shaped = logs.Select(l => new
             {
-                _logger.LogError(ex, "Error in AdminController.GetTrafficTable");
-                throw;
-            }
+                l.IpAddress,
+                l.UserId,
+                l.PathAccessed,
+                l.UserAgent,
+                l.TimeStamp
+            });
+
+            return Json(new { data = shaped });
         }
     }
 }

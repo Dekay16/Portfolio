@@ -1,0 +1,59 @@
+﻿@{
+    ViewData["Title"] = "Traffic Dashboard";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Traffic Dashboard</h2>
+
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <label for="rangeSelect" class="form-label">Select Range</label>
+            <select id="rangeSelect" class="form-select">
+                <option value="day">Day</option>
+                <option value="week" selected>Week</option>
+                <option value="month">Month</option>
+                <option value="custom">Custom Range</option>
+            </select>
+        </div>
+
+        <div class="col-md-3 custom-range d-none">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="date" id="startDate" class="form-control" />
+        </div>
+
+        <div class="col-md-3 custom-range d-none">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="date" id="endDate" class="form-control" />
+        </div>
+
+        <div class="col-md-3 d-flex align-items-end">
+            <button id="applyFilters" class="btn btn-primary w-100">Apply</button>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <canvas id="trafficChart" height="120"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <table id="trafficTable" class="table table-striped table-bordered w-100">
+                <thead>
+                    <tr>
+                        <th>IP Address</th>
+                        <th>User ID</th>
+                        <th>Path Accessed</th>
+                        <th>User Agent</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Admin/traffic.js"></script>
+}

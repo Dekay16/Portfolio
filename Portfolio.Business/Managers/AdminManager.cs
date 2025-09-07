@@ -1,14 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Portfolio.Business.ViewModels;
 using Portfolio.Context.Models;
 using Portfolio.Data;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Portfolio.Business.Managers
 {
@@ -24,96 +20,116 @@ namespace Portfolio.Business.Managers
         }
 
         #region Traffic
-        /// <summary>
-        /// Used to populate the chart
-        /// </summary>
-        /// <param name="range"></param>
-        /// <param name="selectedDay"></param>
-        /// <returns></returns>
-        public List<TrafficSummaryViewModel> GetTraffic(string range, DateTime? selectedDay = null)
+        public List<TrafficSummaryViewModel> GetTrafficSummary(string range, DateTime? startDate, DateTime? endDate)
         {
-            try
+            var query = _db.TrafficLog.AsQueryable();
+            DateTime now = DateTime.Now;
+
+            if (range == "day")
             {
-                var now = DateTime.Now;
-                IQueryable<TrafficLog> query = _db.TrafficLog;
+                var day = now.Date;
+                var grouped = query
+                    .Where(t => t.TimeStamp.Date == day)
+                    .GroupBy(t => t.TimeStamp.Hour)
+                    .Select(g => new { Hour = g.Key, Count = g.Count() })
+                    .ToList();
 
-                if (range == "day")
+                // Fill all 24 hours
+                var result = new List<TrafficSummaryViewModel>();
+                for (int h = 0; h < 24; h++)
                 {
-                    // If a day is selected, use it; otherwise default to today
-                    var day = selectedDay?.Date ?? now.Date;
-
-                    // Group by hour
-                    var grouped = query
-                        .Where(t => t.TimeStamp.Date == day)
-                        .GroupBy(t => t.TimeStamp.Hour)
-                        .Select(g => new { Hour = g.Key, Count = g.Count() })
-                        .AsEnumerable() 
-                        .Select(x => new TrafficSummaryViewModel
-                        {
-                            Date = new DateTime(day.Year, day.Month, day.Day, x.Hour, 0, 0),
-                            Count = x.Count
-                        })
-                        .OrderBy(x => x.Date)
-                        .ToList();
-
-                    // Fill missing hours with 0
-                    var result = new List<TrafficSummaryViewModel>();
-                    for (int h = 0; h < 24; h++)
+                    var data = grouped.FirstOrDefault(g => g.Hour == h);
+                    result.Add(new TrafficSummaryViewModel
                     {
-                        var hourData = grouped.FirstOrDefault(x => x.Date.Hour == h);
-                        result.Add(hourData ?? new TrafficSummaryViewModel { Date = new DateTime(day.Year, day.Month, day.Day, h, 0, 0), Count = 0 });
-                    }
-
-                    return result;
+                        Date = day.AddHours(h),
+                        Count = data?.Count ?? 0
+                    });
                 }
-
-                if (range == "week")
-                {
-                    var start = now.AddDays(-7);
-                    return query
-                        .Where(t => t.TimeStamp >= start)
-                        .GroupBy(t => t.TimeStamp.Date)
-                        .Select(g => new TrafficSummaryViewModel { Date = g.Key, Count = g.Count() })
-                        .OrderBy(x => x.Date)
-                        .ToList();
-                }
-
-                if (range == "month")
-                {
-                    var start = now.AddMonths(-1);
-                    return query
-                        .Where(t => t.TimeStamp >= start)
-                        .GroupBy(t => t.TimeStamp.Date)
-                        .Select(g => new TrafficSummaryViewModel { Date = g.Key, Count = g.Count() })
-                        .OrderBy(x => x.Date)
-                        .ToList();
-                }
-
-                return new List<TrafficSummaryViewModel>();
+                return result;
             }
-            catch (Exception ex)
+            else if (range == "week")
             {
-                _logger.LogError(ex, "Error in Admin Manager: GetTraffic");
-                throw;
+                var start = now.Date.AddDays(-6); // past 7 days including today
+                var grouped = query
+                    .Where(t => t.TimeStamp.Date >= start)
+                    .GroupBy(t => t.TimeStamp.Date)
+                    .Select(g => new { Date = g.Key, Count = g.Count() })
+                    .ToList();
+
+                var result = new List<TrafficSummaryViewModel>();
+                for (int i = 0; i < 7; i++)
+                {
+                    var date = start.AddDays(i);
+                    var data = grouped.FirstOrDefault(g => g.Date == date);
+                    result.Add(new TrafficSummaryViewModel
+                    {
+                        Date = date,
+                        Count = data?.Count ?? 0
+                    });
+                }
+                return result;
             }
+            else if (range == "month")
+            {
+                var start = now.Date.AddDays(-29); // past 30 days including today
+                var grouped = query
+                    .Where(t => t.TimeStamp.Date >= start)
+                    .GroupBy(t => t.TimeStamp.Date)
+                    .Select(g => new { Date = g.Key, Count = g.Count() })
+                    .ToList();
+
+                var result = new List<TrafficSummaryViewModel>();
+                for (int i = 0; i < 30; i++)
+                {
+                    var date = start.AddDays(i);
+                    var data = grouped.FirstOrDefault(g => g.Date == date);
+                    result.Add(new TrafficSummaryViewModel
+                    {
+                        Date = date,
+                        Count = data?.Count ?? 0
+                    });
+                }
+                return result;
+            }
+            else if (range == "custom" && startDate.HasValue && endDate.HasValue)
+            {
+                var totalDays = (endDate.Value.Date - startDate.Value.Date).Days + 1;
+                var grouped = query
+                    .Where(t => t.TimeStamp.Date >= startDate.Value.Date && t.TimeStamp.Date <= endDate.Value.Date)
+                    .GroupBy(t => t.TimeStamp.Date)
+                    .Select(g => new { Date = g.Key, Count = g.Count() })
+                    .ToList();
+
+                var result = new List<TrafficSummaryViewModel>();
+                for (int i = 0; i < totalDays; i++)
+                {
+                    var date = startDate.Value.Date.AddDays(i);
+                    var data = grouped.FirstOrDefault(g => g.Date == date);
+                    result.Add(new TrafficSummaryViewModel
+                    {
+                        Date = date,
+                        Count = data?.Count ?? 0
+                    });
+                }
+                return result;
+            }
+
+            return new List<TrafficSummaryViewModel>();
         }
 
-        /// <summary>
-        /// Used to populate the table
-        /// </summary>
-        /// <returns></returns>
-        public List<TrafficLog> GetTrafficTable()
+        public List<TrafficLog> GetTrafficLogs(DateTime? startDate, DateTime? endDate)
         {
-            try
-            {
-                return _db.TrafficLog.OrderBy(x => x.TimeStamp).ToList();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in Admin Manager: GetTrafficTable");
-                throw;
-            }
+            var query = _db.TrafficLog.AsQueryable();
+
+            if (startDate.HasValue && endDate.HasValue)
+                query = query.Where(t => t.TimeStamp >= startDate && t.TimeStamp <= endDate);
+
+            return query
+                .OrderByDescending(l => l.TimeStamp)
+                .ToList();
         }
-        #endregion
+
     }
+    #endregion
+
 }

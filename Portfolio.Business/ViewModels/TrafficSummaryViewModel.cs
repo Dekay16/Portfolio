@@ -10,5 +10,16 @@ namespace Portfolio.Business.ViewModels
     {
         public DateTime Date { get; set; }
         public int Count { get; set; }
+
+        // Computed label for the chart
+        public string Label
+        {
+            get
+            {
+                if (Date.Hour > 0)
+                    return Date.ToString("MM/dd HH:00");
+                return Date.ToString("MM/dd");
+            }
+        }
     }
 }

@@ -19,7 +19,7 @@
                     Admin
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="VisitsPerDay">Traffic Log</a></li>
+                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Traffic">Traffic Log</a></li>
                     <li><a class="dropdown-item" asp-controller="Admin" asp-action="Error">Error Log</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" href="#">Something else here</a></li>
@@ -41,6 +41,9 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="https://kit.fontawesome.com/63c47b8b1f.js" crossorigin="anonymous"></script>
     <script src="~/lib/datatablesjs/datatables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/chartjs/chart.umd.min.js"></script>
+    <script src="~/lib/chartjs/chart.umd.js"></script>
+    <script src="~/lib/chartjs/chart.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
