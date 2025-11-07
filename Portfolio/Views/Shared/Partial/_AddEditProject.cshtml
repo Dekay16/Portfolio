@@ -23,7 +23,7 @@
                     <label class="col-form-label">Description: </label>
                 </div>
                 <div class="col-6">
-                    <input asp-for="Description" class="form-control" value="@Model.Description" />
+                    <textarea asp-for="Description" class="form-control" value="@Model.Description"></textarea>
                     <span class="text-danger" asp-validation-for="Description"></span>
                 </div>
             </div>

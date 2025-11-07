@@ -12,11 +12,16 @@
 </head>
 <body>
     <div id="sidebar">
+        <div class="px-3 align-items-center text-center">
+            <p class="justify-content-center"><i class="fa-solid fa-user"> </i></p>
+            <h3 class="text-center">Dekan Peterson</h3>
+        </div>
+        <hr />
         <ul class="nav flex-column px-3">
-            <li class="nav-item"><a asp-action="Index" asp-controller="Home" class="nav-link">Home</a></li>
+            <li class="nav-item"><a asp-action="Index" asp-controller="Home" class="nav-link"><i class="fa-solid fa-house pe-2"></i>Home</a></li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Admin
+                    <i class="fa-solid fa-screwdriver-wrench pe-2"></i>Admin
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" asp-controller="Admin" asp-action="Traffic">Traffic Log</a></li>
@@ -25,14 +30,14 @@
                     <li><a class="dropdown-item" href="#">Something else here</a></li>
                 </ul>
             </li>
-            <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link">Contact/Resume</a></li>
+            <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link"><i class="fa-solid fa-file pe-2"></i>Contact/Resume</a></li>
         </ul>
     </div>
 
     <div id="overlay" onclick="toggleSidebar()"></div>
 
     <div id="main-content" class="p-4">
-        <button class="btn btn-dark mb-3" onclick="toggleSidebar()">☰</button>
+        <button class="btn mb-3" style="background: #343a40; color: white;" onclick="toggleSidebar()">☰</button>
         <main role="main" class="container">
             @RenderBody()
         </main>
