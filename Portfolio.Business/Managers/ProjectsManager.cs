@@ -26,6 +26,7 @@ namespace Portfolio.Business.Managers
                     Technologies = p.Technologies,
                     GitHubLink = p.GitHubLink,
                     Extra = p.Extra,
+                    ImageBlob = p.Content
                 })
                     .ToList();
 
@@ -52,6 +53,7 @@ namespace Portfolio.Business.Managers
                     Technologies= project.Technologies,
                     GitHubLink = project.GitHubLink,
                     Extra = project.Extra,
+                    
                 };
 
                 return vm;

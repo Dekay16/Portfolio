@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Portfolio;
-using Portfolio.Business;
 using Portfolio.Business.Interfaces;
 using Portfolio.Business.Managers;
 using Portfolio.Context.Interfaces;
@@ -14,11 +13,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
-
 builder.Services.AddScoped<IProjectsManager, ProjectsManager>();
-builder.Services.AddScoped<AdminManager>();
+builder.Services.AddScoped<IAdminManager, AdminManager>();
+builder.Services.AddScoped<IErrorLogger, ErrorLogger>();
+
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<IErrorLogger, DBErrorLogger>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

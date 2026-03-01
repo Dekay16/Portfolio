@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Portfolio.Business
+namespace Portfolio.Business.Managers
 {
     public interface IErrorLogger
     {
@@ -16,12 +16,12 @@ namespace Portfolio.Business
         void LogInfo(string message);
         void LogWarning(string message);
     }
-    public class DBErrorLogger : IErrorLogger
+    public class ErrorLogger : IErrorLogger
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public DBErrorLogger(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
+        public ErrorLogger(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;

@@ -1,14 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Portfolio.Business.Interfaces;
 using Portfolio.Business.ViewModels;
 using Portfolio.Context.Models;
 using Portfolio.Data;
+using Portfolio.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Portfolio.Business.Managers
 {
-    public class AdminManager
+    public class AdminManager : IAdminManager
     {
         private readonly ApplicationDbContext _db;
         private readonly IErrorLogger _logger;
@@ -119,14 +121,22 @@ namespace Portfolio.Business.Managers
 
         public List<TrafficLog> GetTrafficLogs(DateTime? startDate, DateTime? endDate)
         {
-            var query = _db.TrafficLog.AsQueryable();
+            try
+            {
+                var query = _db.TrafficLog.AsQueryable();
 
-            if (startDate.HasValue && endDate.HasValue)
-                query = query.Where(t => t.TimeStamp >= startDate && t.TimeStamp <= endDate);
+                if (startDate.HasValue && endDate.HasValue)
+                    query = query.Where(t => t.TimeStamp >= startDate && t.TimeStamp <= endDate);
 
-            return query
-                .OrderByDescending(l => l.TimeStamp)
-                .ToList();
+                return query
+                    .OrderByDescending(l => l.TimeStamp)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex);
+                return new List<TrafficLog> { new TrafficLog() };
+            }
         }
 
     }

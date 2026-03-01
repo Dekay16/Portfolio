@@ -22,7 +22,9 @@ namespace Portfolio.Business.ViewModels
         public string? GitHubLink { get; set; }
         public string? Extra { get; set; }
 
-        public IFormFile ImageFile { get; set; }
-        public string? FilePath { get; set; }
+        public byte[]? ImageBlob { get; set; }
+        public string ImageDataUrl => ImageBlob != null ?
+            $"data:image/jpeg;base64,{Convert.ToBase64String(ImageBlob)}" :
+            $"/images/placeholder-image-url.png"; 
     }
 }

@@ -9,10 +9,11 @@ namespace Portfolio.Context.Models
     public class PortfolioProject
     {
         public int ID { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string Technologies { get; set; }
-        public string GitHubLink { get; set; }
-        public string Extra { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public string? Technologies { get; set; }
+        public string? GitHubLink { get; set; }
+        public string? Extra { get; set; }
+        public byte[]? Content { get; set; }
     }
 }
