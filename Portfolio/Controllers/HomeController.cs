@@ -58,7 +58,7 @@ namespace Portfolio.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddEditProject(ProjectsViewModel vm)
+        public IActionResult AddEditProject([FromForm] ProjectsViewModel vm)
         {
             try
             {
@@ -66,28 +66,6 @@ namespace Portfolio.Controllers
                 {
                     return PartialView("Partial/_AddEditProject", vm);
                 }
-
-                //if (vm.ImageFile != null && vm.ImageFile.Length > 0)
-                //{
-                //    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
-
-                //    // Ensure the folder exists
-                //    if (!Directory.Exists(uploadsFolder))
-                //    {
-                //        Directory.CreateDirectory(uploadsFolder);
-                //    }
-
-                //    // Generate unique file name if needed to avoid conflicts
-                //    var uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(vm.ImageFile.FileName);
-                //    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                //    // Save the file to wwwroot/images
-                //    using (var fileStream = new FileStream(filePath, FileMode.Create))
-                //    {
-                //        vm.ImageFile.CopyTo(fileStream);
-                //    }
-
-
 
                 if (vm.ID == 0 || vm.ID == null)
                 {
@@ -98,7 +76,7 @@ namespace Portfolio.Controllers
                         Technologies = vm.Technologies,
                         GitHubLink = vm.GitHubLink,
                         Extra = vm.Extra,
-                        //FilePath = $"/images/{uniqueFileName}"
+                        ImageFile = vm.ImageFile
                     };
 
                     _manager.AddProject(model);
@@ -108,9 +86,8 @@ namespace Portfolio.Controllers
                 {
                     _manager.EditProject(vm);
                 }
-                //}
 
-                return Json(new { success = true });
+                return Ok();
             }
             catch (Exception ex)
             {

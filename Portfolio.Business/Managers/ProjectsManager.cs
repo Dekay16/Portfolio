@@ -26,7 +26,7 @@ namespace Portfolio.Business.Managers
                     Technologies = p.Technologies,
                     GitHubLink = p.GitHubLink,
                     Extra = p.Extra,
-                    ImageBlob = p.Content
+                    ImageBlob = p.ImageContent
                 })
                     .ToList();
 
@@ -77,6 +77,17 @@ namespace Portfolio.Business.Managers
                 project.GitHubLink = vm.GitHubLink;
                 project.Extra = vm.Extra;
 
+                if (vm.ImageFile != null) 
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        vm.ImageFile.CopyTo(memoryStream);
+                        project.ImageContent = memoryStream.ToArray();
+                        project.ImageType = vm.ImageFile.ContentType;
+                        project.ImageFileName = vm.ImageFile.FileName;
+                    }
+                }
+
                 _context.Projects.Add(project);
                 _context.SaveChanges();
             }
@@ -99,6 +110,14 @@ namespace Portfolio.Business.Managers
                 project.Technologies = vm.Technologies;
                 project.Extra= vm.Extra;
                 project.GitHubLink = vm.GitHubLink;
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    vm.ImageFile.CopyTo(memoryStream);
+                    project.ImageContent = memoryStream.ToArray();
+                    project.ImageType = vm.ImageFile.ContentType;
+                    project.ImageFileName = vm.ImageFile.FileName;
+                }
 
                 _context.Update(project);
                 _context.SaveChanges();

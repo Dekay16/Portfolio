@@ -25,6 +25,8 @@ namespace Portfolio.Business.ViewModels
         public byte[]? ImageBlob { get; set; }
         public string ImageDataUrl => ImageBlob != null ?
             $"data:image/jpeg;base64,{Convert.ToBase64String(ImageBlob)}" :
-            $"/images/placeholder-image-url.png"; 
+            $"/images/placeholder-image-url.png";
+
+        public IFormFile? ImageFile { get; set; }
     }
 }

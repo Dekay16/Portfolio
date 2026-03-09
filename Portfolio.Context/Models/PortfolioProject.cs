@@ -14,6 +14,8 @@ namespace Portfolio.Context.Models
         public string? Technologies { get; set; }
         public string? GitHubLink { get; set; }
         public string? Extra { get; set; }
-        public byte[]? Content { get; set; }
+        public byte[]? ImageContent { get; set; }
+        public string? ImageFileName { get; set; }
+        public string? ImageType { get; set; }
     }
 }

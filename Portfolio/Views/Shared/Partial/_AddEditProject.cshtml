@@ -13,7 +13,7 @@
                 <div class="col-3">
                     <label class="col-form-label">Title: </label>
                 </div>
-                <div class="col-6">
+                <div class="col-8">
                     <input asp-for="Title" class="form-control" value="@Model.Title" />
                     <span class="text-danger" asp-validation-for="Title"></span>
                 </div>
@@ -22,7 +22,7 @@
                 <div class="col-3">
                     <label class="col-form-label">Description: </label>
                 </div>
-                <div class="col-6">
+                <div class="col-8">
                     <textarea asp-for="Description" class="form-control" value="@Model.Description"></textarea>
                     <span class="text-danger" asp-validation-for="Description"></span>
                 </div>
@@ -31,7 +31,7 @@
                 <div class="col-3">
                     <label class="col-form-label">Technologies: </label>
                 </div>
-                <div class="col-6">
+                <div class="col-8">
                     <input asp-for="Technologies" class="form-control" value="@Model.Technologies" />
                     <span class="text-danger" asp-validation-for="Technologies"></span>
                 </div>
@@ -40,7 +40,7 @@
                 <div class="col-3">
                     <label class="col-form-label">Extras: </label>
                 </div>
-                <div class="col-6">
+                <div class="col-8">
                     <input asp-for="Extra" class="form-control" value="@Model.Extra" />
                     <span class="text-danger" asp-validation-for="Extra"></span>
                 </div>
@@ -49,20 +49,20 @@
                 <div class="col-3">
                     <label class="col-form-label">GitHub Link: </label>
                 </div>
-                <div class="col-6">
+                <div class="col-8">
                     <input asp-for="GitHubLink" class="form-control" value="@Model.GitHubLink" />
                     <span class="text-danger" asp-validation-for="GitHubLink"></span>
                 </div>
             </div>
-@*             <div class="row m-2">
+            <div class="row m-2">
                 <div class="col-3">
                     <label class="col-form-label">Image: </label>
                 </div>
-                <div class="col-6">
-                    <input type="file" asp-for="ImageFile" class="form-control" value="@Model.FilePath" />
+                <div class="col-8">
+                    <input type="file" asp-for="ImageFile" class="form-control" />
                     <span class="text-danger" asp-validation-for="ImageFile"></span>
                 </div>
-            </div> *@
+            </div>
         </div>
     </form>
 </div>

@@ -1,17 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Portfolio.Business.Interfaces;
 using Portfolio.Business.Managers;
 using Portfolio.Context.Models;
 using System;
 
 namespace Portfolio.Controllers
 {
-    [Route("admin")]
+    [Route("Admin")]
     public class AdminController : Controller
     {
-        private readonly AdminManager _adminManager;
+        private readonly IAdminManager _adminManager;
         private readonly IErrorLogger _logger;
 
-        public AdminController(AdminManager manager, IErrorLogger logger)
+        public AdminController(IAdminManager manager, IErrorLogger logger)
         {
             _adminManager = manager;
             _logger = logger;
