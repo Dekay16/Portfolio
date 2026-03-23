@@ -1,68 +1,100 @@
 ﻿@using Portfolio.Business.ViewModels
 @model ProjectsViewModel
 
-<div class="container">
-    <form id="addeditprojectform" asp-controller="Home" asp-action="AddEditProject" method="post" enctype="multipart/form-data">
-        @Html.AntiForgeryToken()
-        <div class="row mb-3">
-            <div class="col">
-                <input asp-for="ID" class="form-control" hidden />
-                <span asp-validation-for="ID" class="text-danger"></span>
+<form id="addeditprojectform" asp-controller="Home" asp-action="AddEditProject" method="post" enctype="multipart/form-data" class="p-3">
+    @Html.AntiForgeryToken()
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <input asp-for="ID" type="hidden" />
+
+    <div class="row g-3">
+        <div class="col-12">
+            <label asp-for="Title" class="form-label">Title</label>
+            <input asp-for="Title" class="form-control" placeholder="Project title" />
+            <span class="text-danger" asp-validation-for="Title"></span>
+        </div>
+
+        <div class="col-12">
+            <label asp-for="Description" class="form-label">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Short description of the project"></textarea>
+            <span class="text-danger" asp-validation-for="Description"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Technologies" class="form-label">Technologies</label>
+            <input asp-for="Technologies" class="form-control" placeholder="Comma separated (e.g. C#, ASP.NET Core, EF Core)" />
+            <span class="text-danger" asp-validation-for="Technologies"></span>
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="Extra" class="form-label">Extras</label>
+            <input asp-for="Extra" class="form-control" placeholder="Optional notes or tags" />
+            <span class="text-danger" asp-validation-for="Extra"></span>
+        </div>
+
+        <div class="col-md-8">
+            <label asp-for="GitHubLink" class="form-label">GitHub Link</label>
+            <input asp-for="GitHubLink" class="form-control" placeholder="https://github.com/username/repo" />
+            <span class="text-danger" asp-validation-for="GitHubLink"></span>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Image</label>
+            <input asp-for="ImageFile" type="file" class="form-control" id="ImageFile" accept="image/*" />
+            <small class="form-text text-muted">Recommended: 1200×700px. Max 2MB.</small>
+            <span class="text-danger" asp-validation-for="ImageFile"></span>
+        </div>
+
+        <div class="col-12 d-flex gap-3 align-items-center">
+            <div>
+                @{
+                    var hasImage = !string.IsNullOrWhiteSpace(Model?.ImageDataUrl);
+                }
+                <img id="imagePreview" src="@(hasImage ? Model.ImageDataUrl : "")" alt="Project image preview"
+                     class="img-fluid img-thumbnail" style="max-height:160px;@(hasImage ? "" : "display:none;")" />
             </div>
-            <div class="row m-2">
-                <div class="col-3">
-                    <label class="col-form-label">Title: </label>
-                </div>
-                <div class="col-8">
-                    <input asp-for="Title" class="form-control" value="@Model.Title" />
-                    <span class="text-danger" asp-validation-for="Title"></span>
-                </div>
-            </div>
-            <div class="row m-2">
-                <div class="col-3">
-                    <label class="col-form-label">Description: </label>
-                </div>
-                <div class="col-8">
-                    <textarea asp-for="Description" class="form-control" value="@Model.Description"></textarea>
-                    <span class="text-danger" asp-validation-for="Description"></span>
-                </div>
-            </div>
-            <div class="row m-2">
-                <div class="col-3">
-                    <label class="col-form-label">Technologies: </label>
-                </div>
-                <div class="col-8">
-                    <input asp-for="Technologies" class="form-control" value="@Model.Technologies" />
-                    <span class="text-danger" asp-validation-for="Technologies"></span>
-                </div>
-            </div>
-            <div class="row m-2">
-                <div class="col-3">
-                    <label class="col-form-label">Extras: </label>
-                </div>
-                <div class="col-8">
-                    <input asp-for="Extra" class="form-control" value="@Model.Extra" />
-                    <span class="text-danger" asp-validation-for="Extra"></span>
-                </div>
-            </div>
-            <div class="row m-2">
-                <div class="col-3">
-                    <label class="col-form-label">GitHub Link: </label>
-                </div>
-                <div class="col-8">
-                    <input asp-for="GitHubLink" class="form-control" value="@Model.GitHubLink" />
-                    <span class="text-danger" asp-validation-for="GitHubLink"></span>
-                </div>
-            </div>
-            <div class="row m-2">
-                <div class="col-3">
-                    <label class="col-form-label">Image: </label>
-                </div>
-                <div class="col-8">
-                    <input type="file" asp-for="ImageFile" class="form-control" />
-                    <span class="text-danger" asp-validation-for="ImageFile"></span>
-                </div>
+
+            <!-- NOTE: buttons moved to the modal footer in main layout to avoid duplicates -->
+            <div class="ms-auto">
+                <small class="text-muted">Changes will be saved when you click <strong>Save</strong> in the modal footer.</small>
             </div>
         </div>
-    </form>
-</div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+        (function ($) {
+            $(function () {
+                // Bind change on file input via delegated handler in case partial is injected dynamically
+                $(document).off('change', '#ImageFile').on('change', '#ImageFile', function (e) {
+                    var file = this.files && this.files[0];
+                    var $preview = $('#imagePreview');
+
+                    if (!file) {
+                        $preview.hide().attr('src', '');
+                        return;
+                    }
+
+                    var reader = new FileReader();
+                    reader.onload = function (ev) {
+                        $preview.attr('src', ev.target.result).show();
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                // If partial was loaded with an existing image, ensure it is visible
+                var $previewInit = $('#imagePreview');
+                if ($previewInit.length && $previewInit.attr('src')) {
+                    $previewInit.show();
+                }
+
+                // Focus first visible input for accessibility
+                setTimeout(function () {
+                    $('#addeditprojectform').find('input, textarea').filter(':visible').first().focus();
+                }, 50);
+            });
+        })(jQuery);
+    </script>
+}

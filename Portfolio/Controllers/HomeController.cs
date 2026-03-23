@@ -80,14 +80,14 @@ namespace Portfolio.Controllers
                     };
 
                     _manager.AddProject(model);
-
                 }
                 else
                 {
                     _manager.EditProject(vm);
                 }
 
-                return Ok();
+                // Return JSON so client-side can detect success and close the modal
+                return Json(new { success = true });
             }
             catch (Exception ex)
             {
