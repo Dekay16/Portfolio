@@ -4,62 +4,167 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="container">
-    <div class="text-center">
-        <h1 class="display-4">Hello, I am Dekan Peterson</h1>
-        <p>Software Engineer who builds clean, secure, and efficient .NET Applications.</p>
-    </div>
-    <hr />
-    <div class="row">
-        <div class="text-start d-flex col-6">
-            <h4>Projects:</h4>
+<style>
+    /* Local view styles for a clean, professional card grid */
+    .hero {
+        background: linear-gradient(180deg, rgba(52,58,64,0.06), rgba(255,255,255,0));
+        border-radius: 12px;
+        padding: 2.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .project-card {
+        border: 0;
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform .18s ease, box-shadow .18s ease;
+        box-shadow: 0 6px 18px rgba(18, 18, 20, 0.06);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .project-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 40px rgba(18, 18, 20, 0.12);
+    }
+
+    .project-img {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        background: #f5f5f7;
+    }
+
+    .card-body .description {
+        max-height: 4.5rem;
+        overflow: hidden;
+        color: #495057;
+    }
+
+    .tech-badges .badge {
+        margin-right: 0.35rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .admin-actions {
+        opacity: 0;
+        transition: opacity .15s ease;
+    }
+
+    .card:hover .admin-actions {
+        opacity: 1;
+    }
+
+    .projects-toolbar {
+        gap: .5rem;
+    }
+
+    @@media (max-width: 767px) {
+        .project-img {
+            height: 140px;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <section class="hero">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 mb-2">Hi — I’m Dekan Peterson</h1>
+                <p class="lead mb-3">Software Engineer building clean, secure, and efficient .NET applications. I focus on maintainable architecture, practical automation, and delivering business value.</p>
+                <div class="d-flex projects-toolbar">
+                    <a asp-controller="Home" asp-action="Contact" class="btn btn-primary me-2">Contact / Resume</a>
+                    <button type="button" onclick="openAddEditModal(0)" class="btn btn-outline-success">+ Add Project</button>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="d-inline-block text-center">
+                    <div class="fs-1 text-secondary mb-2"><i class="fa-solid fa-user-circle"></i></div>
+                    <div class="text-muted">Full‑stack .NET • Cloud • CI/CD</div>
+                </div>
+            </div>
         </div>
-        <div class="justify-content-end d-flex col-6">
-            <button type="button" onclick="openAddEditModal(0)" class="btn btn-success open-modal">+ Add</button>
-        </div>
+    </section>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Projects</h4>
+        <small class="text-muted">@Model?.Count ?? 0 projects</small>
     </div>
-    <div class="project-cards">
-        @for (int i = 0; i < Model.Count; i += 3)
+
+    <div class="row g-4">
+        @if (Model == null || Model.Count == 0)
         {
-            <div class="row mb-4">
-                @for (int j = i; j < i + 3 && j < Model.Count; j++)
-                {
-                    <div class="col-md-4">
-                        <div class="card h-100 m-3">
-                            <img src="@Model[j].ImageDataUrl" class="card-img-top" alt="Project card image">
-                            <div class="card-body d-flex flex-column">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h5 class="card-title mb-0">@Model[j].Title</h5>
-                                    <div>
-                                        <a onclick="openAddEditModal(@Model[j].ID)" class="text-dark me-2">
-                                            <i class="fa-solid fa-pen-to-square"></i>
-                                        </a>
-                                        <a onclick="deleteProject(@Model[j].ID)" class="text-danger">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </a>
-                                    </div>
+            <div class="col-12">
+                <div class="alert alert-info mb-0">
+                    No projects found. Use the <strong>+ Add Project</strong> button to add your first project.
+                </div>
+            </div>
+        }
+        else
+        {
+            for (int i = 0; i < Model.Count; i++)
+            {
+                var item = Model[i];
+                <div class="col-sm-6 col-lg-4 d-flex">
+                    <div class="card project-card w-100">
+                        <img src="@item.ImageDataUrl" alt="Screenshot for @item.Title" class="project-img card-img-top" />
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">@item.Title</h5>
+                                <div class="admin-actions">
+                                    <a title="Edit" onclick="openAddEditModal(@item.ID)" class="text-dark me-2" role="button" aria-label="Edit @item.Title">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a title="Delete" onclick="deleteProject(@item.ID)" class="text-danger" role="button" aria-label="Delete @item.Title">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
                                 </div>
-                                <p class="card-text">@Model[j].Description</p> <br />
-                                <p class="text-secondary-emphasis">Technologies: @Model[j].Technologies</p>
-                                <a href="@Model[j].GitHubLink" class="btn btn-primary mt-auto"><i class="fa-brands fa-github"></i> GitHub</a>
+                            </div>
+
+                            <p class="description card-text mb-2">@item.Description</p>
+
+                            <div class="tech-badges mb-3">
+                                @{
+                                    var techs = (item.Technologies ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                                    foreach (var tech in techs)
+                                    {
+                                        <span class="badge bg-light text-dark border">@tech</span>
+                                    }
+                                }
+                            </div>
+
+                            <div class="mt-auto d-flex gap-2">
+                                <a href="@item.GitHubLink" target="_blank" class="btn btn-outline-dark btn-sm" rel="noopener noreferrer">
+                                    <i class="fa-brands fa-github me-1"></i> Source
+                                </a>
+                                @* @if (!string.IsNullOrWhiteSpace(item.GitHubLink))
+                                {
+                                    <a href="@item.GitHubLink" target="_blank" class="btn btn-primary btn-sm" rel="noopener noreferrer">Live Demo</a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-primary btn-sm" disabled>Live Demo</button>
+                                } *@
                             </div>
                         </div>
                     </div>
-                }
-            </div>
+                </div>
+            }
         }
     </div>
 </div>
 
+<!-- Add / Edit Modal (content loaded dynamically) -->
 <div class="modal fade" id="addEditProjectModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content" id="projectContent">
             <div class="modal-header">
-                <h5 class="modal-title">Add / Edit Item</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title">Add / Edit Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="addEditModalBody">
-
+                <!-- Server will inject partial view via AJAX -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -68,8 +173,14 @@
         </div>
     </div>
 </div>
+
 @section Scripts {
     <script src="~/js/home/index.js"></script>
+    <script>
+        // Enable Bootstrap tooltips (used for admin icons)
+        $(function () {
+            var tipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tipTriggerList.map(function (el) { return new bootstrap.Tooltip(el); });
+        });
+    </script>
 }
-
-

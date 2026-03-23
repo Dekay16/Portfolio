@@ -17,6 +17,9 @@ namespace Portfolio.Controllers
             _adminManager = manager;
             _logger = logger;
         }
+
+        #region Traffic
+
         [HttpGet("Traffic")]
         public IActionResult Traffic()
         {
@@ -46,6 +49,8 @@ namespace Portfolio.Controllers
 
             return Json(new { data = shaped });
         }
+
+        #endregion
     }
 }
 

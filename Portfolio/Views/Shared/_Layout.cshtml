@@ -1,47 +1,240 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Portfolio</title>
     <script type="importmap"></script>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link href="~/lib/datatablesjs/datatables.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/Portfolio.styles.css" asp-append-version="true" />
+
+    <style>
+        /* Navigation + Sidebar styles */
+        :root {
+            --sidebar-width: 260px;
+            --sidebar-bg: #0d1b2a;
+            --sidebar-color: #e6eef8;
+            --accent: #0d6efd;
+        }
+
+        body {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+        }
+
+        /* Top navbar */
+        .top-navbar {
+            background: linear-gradient(180deg, #ffffffcc, #ffffffcc);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            z-index: 1050;
+        }
+
+        .brand-title {
+            font-weight: 600;
+            letter-spacing: .2px;
+        }
+
+        /* Sidebar */
+        #sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: var(--sidebar-width);
+            padding: 1.25rem 0.75rem;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-color);
+            overflow-y: auto;
+            transition: transform .22s ease;
+            transform: translateX(0);
+            z-index: 1040;
+        }
+
+            #sidebar.collapsed {
+                transform: translateX(calc(-1 * var(--sidebar-width)));
+            }
+
+            #sidebar .nav-link {
+                color: var(--sidebar-color);
+                border-radius: 6px;
+                padding: .5rem .75rem;
+            }
+
+                #sidebar .nav-link:hover,
+                #sidebar .nav-link.active {
+                    background: rgba(255, 255, 255, 0.04);
+                    color: #fff;
+                    text-decoration: none;
+                }
+
+            #sidebar .profile {
+                display: flex;
+                align-items: center;
+                gap: .6rem;
+                margin-bottom: .75rem;
+            }
+
+                #sidebar .profile .avatar {
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 50%;
+                    background: linear-gradient(135deg, #1f618d, #3a8fd1);
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: #fff;
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                }
+
+        /* Overlay for small screens */
+        #overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            z-index: 1035;
+        }
+
+            #overlay.show {
+                display: block;
+            }
+
+        /* Main content area */
+        #main-content {
+            margin-left: var(--sidebar-width);
+            transition: margin-left .22s ease;
+        }
+
+            #main-content.expanded {
+                margin-left: 0;
+            }
+
+        @@media (max-width: 991.98px) {
+            #sidebar
+
+        {
+            transform: translateX(calc(-1 * var(--sidebar-width)));
+            position: fixed;
+        }
+
+        #sidebar.open {
+            transform: translateX(0);
+        }
+
+        #main-content {
+            margin-left: 0;
+        }
+
+        }
+    </style>
 </head>
+
 <body>
-    <div id="sidebar">
-        <div class="px-3 align-items-center text-center">
-            <p class="justify-content-center"><i class="fa-solid fa-user"> </i></p>
-            <h3 class="text-center">Dekan Peterson</h3>
-        </div>
-        <hr />
-        <ul class="nav flex-column px-3">
-            <li class="nav-item"><a asp-action="Index" asp-controller="Home" class="nav-link"><i class="fa-solid fa-house pe-2"></i>Home</a></li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-screwdriver-wrench pe-2"></i>Admin
+    <!-- Top navigation -->
+    <header class="top-navbar shadow-sm">
+        <div class="container-fluid">
+            <div class="d-flex align-items-center py-2">
+                <button class="btn btn-outline-dark me-3 d-inline-flex align-items-center" id="sidebarToggle"
+                        onclick="toggleSidebar()" aria-label="Toggle navigation">
+                    <span class="fs-5">☰</span>
+                </button>
+
+                <a class="navbar-brand d-flex align-items-center me-auto" asp-controller="Home" asp-action="Index">
+                    <span class="brand-title">Dekan Peterson</span>
+                    <small class="text-muted ms-2">• Portfolio</small>
                 </a>
-                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                <nav class="d-none d-md-flex align-items-center gap-2">
+                    <a asp-controller="Home" asp-action="Index" class="nav-link px-2">Home</a>
+                    <a asp-controller="Home" asp-action="Contact" class="nav-link px-2">Contact / Resume</a>
+
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle px-2" href="#" id="adminTopDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            Admin
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminTopDropdown">
+                            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Traffic">Traffic Log</a></li>
+                            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Error">Error Log</a></li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="ms-3 d-none d-md-block">
+                    <a href="https://github.com/Dekay16" target="_blank"
+                       class="btn btn-outline-secondary btn-sm" rel="noopener noreferrer">
+                        <i class="fa-brands fa-github"></i> GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" aria-label="Sidebar navigation" role="navigation">
+        <div class="profile px-2">
+            <div class="avatar" aria-hidden="true">DP</div>
+            <div>
+                <div class="fw-semibold">Dekan Peterson</div>
+                <small class="text-muted">Software Engineer</small>
+            </div>
+        </div>
+
+        <hr class="border-secondary opacity-25" />
+
+        <ul class="nav flex-column px-1">
+            <li class="nav-item">
+                <a asp-action="Index" asp-controller="Home" class="nav-link d-flex align-items-center">
+                    <i class="fa-solid fa-house pe-2"></i> Home
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a asp-action="Contact" asp-controller="Home" class="nav-link d-flex align-items-center">
+                    <i class="fa-solid fa-file pe-2"></i> Contact / Resume
+                </a>
+            </li>
+
+            <li class="nav-item dropdown mt-2">
+                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="sidebarAdmin" role="button"
+                   data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-screwdriver-wrench pe-2"></i> Admin
+                </a>
+                <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Admin" asp-action="Traffic">Traffic Log</a></li>
                     <li><a class="dropdown-item" asp-controller="Admin" asp-action="Error">Error Log</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#">Something else here</a></li>
                 </ul>
             </li>
-            <li class="nav-item"><a asp-action="Contact" asp-controller="Home" class="nav-link"><i class="fa-solid fa-file pe-2"></i>Contact/Resume</a></li>
-        </ul>
-    </div>
 
-    <div id="overlay" onclick="toggleSidebar()"></div>
+            <li class="nav-item mt-3">
+                <div class="px-2">
+                    <small class="text-muted">Useful</small>
+                </div>
+                <a class="nav-link d-flex align-items-center" href="https://github.com/Dekay16" target="_blank"
+                   rel="noopener noreferrer">
+                    <i class="fa-brands fa-github pe-2"></i> GitHub
+                </a>
+            </li>
+        </ul>
+
+        <div class="px-2 mt-4">
+            <small class="text-muted">© @DateTime.Now.Year Dekan Peterson</small>
+        </div>
+    </aside>
+
+    <div id="overlay" onclick="toggleSidebar()" aria-hidden="true"></div>
 
     <div id="main-content" class="p-4">
-        <button class="btn mb-3" style="background: #343a40; color: white;" onclick="toggleSidebar()">☰</button>
         <main role="main" class="container">
             @RenderBody()
         </main>
     </div>
+
     <script src="~/lib/jquery/dist/jquery-3.7.1.min.js" asp-append-version="true"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
     <script src="https://kit.fontawesome.com/63c47b8b1f.js" crossorigin="anonymous"></script>
@@ -50,6 +243,102 @@
     <script src="~/lib/chartjs/chart.umd.js"></script>
     <script src="~/lib/chartjs/chart.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        // jQuery-based sidebar toggle logic
+        // Keeps the same IDs and classes used elsewhere: #sidebar, #overlay, #main-content
+        // Behavior:
+        //  - <= 991.98px : offcanvas (toggle .open + overlay .show)
+        //  - >  991.98px : desktop collapse (toggle .collapsed on sidebar and .expanded on main-content)
+        // Exposes global function window.toggleSidebar() to remain compatible with existing inline onclick attributes.
+        (function ($) {
+            // Ensure jQuery is available
+            $(function () {
+                var $window = $(window);
+                var $sidebar = $('#sidebar');
+                var $main = $('#main-content');
+                var $overlay = $('#overlay');
+                var MOBILE_BREAKPOINT = 991.98;
+
+                // Expose globally for compatibility
+                window.toggleSidebar = function () {
+                    var isMobile = $window.width() <= MOBILE_BREAKPOINT;
+
+                    if (isMobile) {
+                        var open = $sidebar.hasClass('open');
+                        if (open) {
+                            $sidebar.removeClass('open');
+                            $overlay.removeClass('show');
+                            // restore scroll on body
+                            $('body').css('overflow', '');
+                        } else {
+                            $sidebar.addClass('open');
+                            $overlay.addClass('show');
+                            // prevent body scroll when offcanvas is open
+                            $('body').css('overflow', 'hidden');
+                        }
+                    } else {
+                        var collapsed = $sidebar.hasClass('collapsed');
+                        if (collapsed) {
+                            $sidebar.removeClass('collapsed');
+                            $main.removeClass('expanded');
+                        } else {
+                            $sidebar.addClass('collapsed');
+                            $main.addClass('expanded');
+                        }
+                    }
+                };
+
+                // Click overlay to close offcanvas on mobile
+                $overlay.on('click', function () {
+                    if ($sidebar.hasClass('open')) {
+                        toggleSidebar();
+                    }
+                });
+
+                // Close sidebar on Escape when offcanvas is open
+                $(document).on('keydown', function (e) {
+                    if (e.key === 'Escape' || e.keyCode === 27) {
+                        if ($sidebar.hasClass('open')) {
+                            toggleSidebar();
+                        }
+                    }
+                });
+
+                // Keep state in a consistent, deterministic way on resize
+                $window.on('resize', function () {
+                    var isMobile = $window.width() <= MOBILE_BREAKPOINT;
+
+                    if (isMobile) {
+                        // ensure desktop collapsed state isn't applied on mobile
+                        $sidebar.removeClass('collapsed');
+                        $main.removeClass('expanded');
+                    } else {
+                        // ensure offcanvas classes are removed on desktop
+                        $sidebar.removeClass('open');
+                        $overlay.removeClass('show');
+                        $('body').css('overflow', '');
+                    }
+                });
+
+                // Initialize sensible state on page load
+                (function initState() {
+                    if ($window.width() <= MOBILE_BREAKPOINT) {
+                        $sidebar.removeClass('collapsed');
+                        $main.removeClass('expanded');
+                        $sidebar.removeClass('open');
+                        $overlay.removeClass('show');
+                        $('body').css('overflow', '');
+                    } else {
+                        $sidebar.removeClass('open');
+                        $overlay.removeClass('show');
+                    }
+                })();
+            });
+        })(jQuery);
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
