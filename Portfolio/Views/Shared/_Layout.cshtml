@@ -54,42 +54,42 @@
             z-index: 1040;
         }
 
-            #sidebar.collapsed {
-                transform: translateX(calc(-1 * var(--sidebar-width)));
-            }
+        #sidebar.collapsed {
+            transform: translateX(calc(-1 * var(--sidebar-width)));
+        }
 
-            #sidebar .nav-link {
-                color: var(--sidebar-color);
-                border-radius: 6px;
-                padding: .5rem .75rem;
-            }
+        #sidebar .nav-link {
+            color: var(--sidebar-color);
+            border-radius: 6px;
+            padding: .5rem .75rem;
+        }
 
-                #sidebar .nav-link:hover,
-                #sidebar .nav-link.active {
-                    background: rgba(255, 255, 255, 0.04);
-                    color: #fff;
-                    text-decoration: none;
-                }
+        #sidebar .nav-link:hover,
+        #sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            text-decoration: none;
+        }
 
-            #sidebar .profile {
-                display: flex;
-                align-items: center;
-                gap: .6rem;
-                margin-bottom: .75rem;
-            }
+        #sidebar .profile {
+            display: flex;
+            align-items: center;
+            gap: .6rem;
+            margin-bottom: .75rem;
+        }
 
-                #sidebar .profile .avatar {
-                    width: 48px;
-                    height: 48px;
-                    border-radius: 50%;
-                    background: linear-gradient(135deg, #1f618d, #3a8fd1);
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    color: #fff;
-                    font-weight: 600;
-                    font-size: 1.1rem;
-                }
+        #sidebar .profile .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1f618d, #3a8fd1);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
 
         /* Overlay for small screens */
         #overlay {
@@ -100,9 +100,9 @@
             z-index: 1035;
         }
 
-            #overlay.show {
-                display: block;
-            }
+        #overlay.show {
+            display: block;
+        }
 
         /* Main content area */
         #main-content {
@@ -110,26 +110,23 @@
             transition: margin-left .22s ease;
         }
 
-            #main-content.expanded {
-                margin-left: 0;
-            }
-
-        @@media (max-width: 991.98px) {
-            #sidebar
-
-        {
-            transform: translateX(calc(-1 * var(--sidebar-width)));
-            position: fixed;
-        }
-
-        #sidebar.open {
-            transform: translateX(0);
-        }
-
-        #main-content {
+        #main-content.expanded {
             margin-left: 0;
         }
 
+        @@media (max-width: 991.98px) {
+            #sidebar {
+                transform: translateX(calc(-1 * var(--sidebar-width)));
+                position: fixed;
+            }
+
+            #sidebar.open {
+                transform: translateX(0);
+            }
+
+            #main-content {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
@@ -160,7 +157,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminTopDropdown">
                             <li><a class="dropdown-item" asp-controller="Admin" asp-action="Traffic">Traffic Log</a></li>
-                            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Error">Error Log</a></li>
+                            <li><a class="dropdown-item" asp-controller="Admin" asp-action="Errors">Error Logs</a></li>
                         </ul>
                     </div>
                 </nav>
@@ -207,7 +204,7 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" asp-controller="Admin" asp-action="Traffic">Traffic Log</a></li>
-                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Error">Error Log</a></li>
+                    <li><a class="dropdown-item" asp-controller="Admin" asp-action="Errors">Error Logs</a></li>
                 </ul>
             </li>
 
